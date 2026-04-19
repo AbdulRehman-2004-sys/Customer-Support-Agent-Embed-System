@@ -2,35 +2,35 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 const footerLinks = [
-  { name: 'Privacy', href: '#' },
-  { name: 'Terms', href: '#' },
-  { name: 'API Docs', href: '#' },
-  { name: 'Status', href: '#' },
-  { name: 'Twitter', href: '#' },
+  { name: 'Privacy', href: '/privacy' },
+  { name: 'Terms', href: '/terms' },
+  { name: 'API Docs', href: '/docs' },
+  { name: 'Status', href: '/status' },
+  { name: 'Twitter', href: 'https://twitter.com' },
 ];
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-outline-variant/10 bg-surface-container-low">
-      <div className="flex flex-col md:flex-row justify-between items-center py-12 px-8 max-w-7xl mx-auto gap-6">
+    <footer className="bg-zinc-950 w-full py-12 px-8 border-t border-indigo-500/10 shadow-[0_-4px_20px_rgba(129,140,248,0.05)]">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-8 max-w-7xl mx-auto">
         <div className="flex flex-col items-center md:items-start gap-4">
-          <div className="text-lg font-bold text-on-surface">Fluid Architect</div>
-          <p className="text-on-surface-variant text-sm">
-            © 2024 Fluid Architect. Designing the future of embedded support.
+          <div className="text-lg font-bold text-zinc-100">FluidArch</div>
+          <p className="text-xs uppercase tracking-widest text-zinc-500">
+            © 2024 FluidArch. Engineered for flow.
           </p>
         </div>
-        
-        <div className="flex flex-wrap justify-center gap-8">
+        <div className="flex gap-8">
           {footerLinks.map((link) => (
-            <a
+            <Link
               key={link.name}
               href={link.href}
-              className="text-on-surface-variant font-medium hover:text-primary underline-offset-4 hover:underline transition-opacity"
+              className="text-xs uppercase tracking-widest text-zinc-500 hover:text-indigo-300 transition-colors opacity-80 hover:opacity-100"
             >
               {link.name}
-            </a>
+            </Link>
           ))}
         </div>
       </div>

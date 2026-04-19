@@ -1,57 +1,108 @@
+/* app/globals.css */
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
-  --font-headline: var(--font-inter);
-  --font-body: var(--font-inter);
-
+@theme {
   --color-background: rgb(var(--background));
-  --color-on-background: rgb(var(--on-background));
+  --color-surface: rgb(var(--surface));
+  --color-surface-container-low: rgb(var(--surface-container-low));
+  --color-surface-container: rgb(var(--surface-container));
+  --color-surface-container-high: rgb(var(--surface-container-high));
+  --color-surface-container-highest: rgb(var(--surface-container-highest));
+  --color-surface-variant: rgb(var(--surface-variant));
   --color-primary: rgb(var(--primary));
   --color-primary-container: rgb(var(--primary-container));
-  --color-on-primary: #ffffff;
-  --color-surface: rgb(var(--surface));
-  --color-surface-container-low: rgb(240 244 252);
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container: rgb(225 235 250);
-  --color-surface-container-high: rgb(var(--surface-variant));
-  --color-surface-variant: rgb(var(--surface-variant));
-  --color-on-surface: rgb(var(--on-background));
+  --color-on-primary-container: rgb(var(--on-primary-container));
+  --color-on-surface: rgb(var(--on-surface));
   --color-on-surface-variant: rgb(var(--on-surface-variant));
-  --color-outline: rgb(var(--outline));
   --color-outline-variant: rgb(var(--outline-variant));
   --color-tertiary: rgb(var(--tertiary));
-  --color-tertiary-container: rgb(var(--tertiary-container));
-}
+  --color-error: rgb(var(--error));
 
+  --font-body: var(--font-plus-jakarta), sans-serif;
+}
 @layer base {
   :root {
-    --background: 248 249 255;
-    --on-background: 11 28 48;
-    --primary: 70 72 212;
-    --primary-container: 96 99 238;
-    --surface: 248 249 255;
-    --surface-variant: 211 228 254;
-    --on-surface-variant: 70 69 84;
-    --outline: 118 117 134;
-    --outline-variant: 199 196 215;
-    --tertiary: 144 73 0;
-    --tertiary-container: 181 93 0;
-    --error: 186 26 26;
-    --error-container: 255 218 214;
+    --background: 19 19 23;
+    --surface: 19 19 23;
+    --surface-container-low: 27 27 31;
+    --surface-container: 31 31 35;
+    --surface-container-high: 42 41 46;
+    --surface-container-highest: 53 52 57;
+    --surface-variant: 53 52 57;
+    --primary: 189 194 255;
+    --primary-container: 129 140 248;
+    --on-primary-container: 16 27 138;
+    --on-surface: 228 225 231;
+    --on-surface-variant: 198 197 213;
+    --outline-variant: 69 70 83;
+    --tertiary: 247 189 62;
+    --error: 255 180 171;
   }
 }
 
 @layer utilities {
-  .glass-panel {
-    background: rgba(248, 249, 255, 0.85);
-    backdrop-filter: blur(20px);
+  .noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.03;
+    z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
   
-  .bg-noise {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  .glass-panel {
+    background: rgba(42, 41, 46, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
+  
+  .animate-pulse-delay-75 {
+    animation-delay: 75ms;
+  }
+  
+  .animate-pulse-delay-150 {
+    animation-delay: 150ms;
+  }
+}
+
+/* app/globals.css mein add karein */
+
+.animated-bg {
+  background: radial-gradient(circle at 0% 0%, #1a1a24 0%, #131317 50%, #1e1b4b 100%);
+}
+
+.particle {
+  position: absolute;
+  background: rgba(129, 140, 248, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.glass-card {
+  background: rgba(26, 26, 36, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(129, 140, 248, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: slideIn 0.2s ease-out;
+}
+
+.delay-700 {
+  animation-delay: 700ms;
 }

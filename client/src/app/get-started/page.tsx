@@ -2,31 +2,48 @@
 'use client';
 
 import React, { useState, useCallback, useRef } from 'react';
-import { Upload, CheckCircle, AlertCircle, Sparkles, Copy, X } from 'lucide-react';
+import { 
+  Store, MessageSquare, CloudUpload, CheckCircle, AlertCircle,
+  Palette, ChevronDown, ChevronUp, Bolt, Bell, Settings,
+  LayoutDashboard, Network, BookOpen, Share2, X, FileText
+} from 'lucide-react';
 import Link from 'next/link';
 
+// ErrorIcon component for error display
+const ErrorIcon = AlertCircle;
+
 export default function GetStartedPage() {
+  const [shopName, setShopName] = useState('');
   const [description, setDescription] = useState('');
+  const [charCount, setCharCount] = useState(0);
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [isUploading, setIsUploading] = useState(false); // Used for file drop
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
-  const [showModal, setShowModal] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [isCustomizationOpen, setIsCustomizationOpen] = useState(false);
+  const [isLiveEcosystem, setIsLiveEcosystem] = useState(true);
+  const [brandAccent, setBrandAccent] = useState('#818cf8');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const text = e.target.value;
+    if (text.length <= 500) {
+      setDescription(text);
+      setCharCount(text.length);
+    }
+  };
 
   const handleFileChange = useCallback((selectedFile: File | null) => {
     if (!selectedFile) return;
 
-    // Validate file type
     if (selectedFile.type !== 'application/pdf' && !selectedFile.name.endsWith('.pdf')) {
       setUploadStatus('error');
       setTimeout(() => setUploadStatus('idle'), 3000);
       return;
     }
 
-    // Validate file size (25MB max)
     if (selectedFile.size > 25 * 1024 * 1024) {
       setUploadStatus('error');
       setTimeout(() => setUploadStatus('idle'), 3000);
@@ -37,7 +54,7 @@ export default function GetStartedPage() {
     setIsUploading(true);
     setUploadStatus('uploading');
 
-    // Simulate direct file select delay internally before confirming
+    // Simulate upload
     setTimeout(() => {
       setUploadStatus('success');
       setIsUploading(false);
@@ -63,212 +80,101 @@ export default function GetStartedPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!description.trim()) {
-      alert('Please enter a description of your support goals.');
+    if (!shopName.trim()) {
+      alert('Please enter your shop name');
       return;
     }
-    
+
     setIsSubmitting(true);
     
-    try {
-      const formData = new FormData();
-      formData.append('description', description);
-      if (file) {
-        formData.append('file', file);
-      }
-      
-      const response = await fetch('https://customer-support-agent-embed-system.onrender.com/api/onboard', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error('Onboarding failed. Please try again.');
-      }
-      
-      // Successfully uploaded to database
-      setShowModal(true);
-    } catch (error) {
-      console.error(error);
-      alert('Failed to connect to backend layer. Is the server running?');
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    console.log({ shopName, description, file, isLiveEcosystem, brandAccent });
+    alert('Support system initialized successfully!');
+    
+    setIsSubmitting(false);
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(`<script src="https://customer-support-agent-embed-system.vercel.app/embed.js"></script>`);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const getUploadZoneContent = () => {
-    if (uploadStatus === 'success' && file) {
-      return (
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-12 h-12 bg-emerald-500/10 rounded-full flex items-center justify-center">
-            <CheckCircle className="w-6 h-6 text-emerald-400" />
-          </div>
-          <div className="text-center">
-            <p className="text-on-surface font-medium">{file.name}</p>
-            <p className="text-on-surface-variant text-sm">Ready to use</p>
-          </div>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setFile(null);
-              setUploadStatus('idle');
-            }}
-            className="text-on-surface-variant hover:text-on-surface text-sm underline"
-          >
-            Remove file
-          </button>
-        </div>
-      );
-    }
-
-    if (uploadStatus === 'error') {
-      return (
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center">
-            <AlertCircle className="w-6 h-6 text-red-400" />
-          </div>
-          <div className="text-center">
-            <p className="text-red-400 font-medium">Upload failed</p>
-            <p className="text-on-surface-variant text-sm">PDF only, max 25MB</p>
-          </div>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setUploadStatus('idle');
-              setFile(null);
-            }}
-            className="text-on-surface-variant hover:text-on-surface text-sm underline"
-          >
-            Try again
-          </button>
-        </div>
-      );
-    }
-
-    return (
-      <div className="flex flex-col items-center gap-3 pointer-events-none">
-        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-          {isUploading ? (
-            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          ) : (
-            <Upload className="w-6 h-6 text-primary" />
-          )}
-        </div>
-        <div className="text-center">
-          <p className="text-on-surface">
-            {isUploading ? 'Validating...' : 'Click to upload or drag and drop'}
-          </p>
-          <p className="text-on-surface-variant text-sm">Maximum file size 25MB</p>
-        </div>
-      </div>
-    );
+  const removeFile = () => {
+    setFile(null);
+    setUploadStatus('idle');
   };
 
   return (
-    <div className="min-h-screen bg-background text-on-surface flex flex-col relative font-body">
-      
-      {/* SUCCESS MODAL OVERLAY */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-          <div className="bg-surface-container-lowest rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in zoom-in-95 fade-in duration-300">
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-emerald-500/10 rounded-full">
-                  <CheckCircle className="w-6 h-6 text-emerald-500" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-on-surface">System Initialized!</h3>
-                  <p className="text-sm text-on-surface-variant">Your embed script is ready.</p>
-                </div>
-              </div>
-              <button onClick={() => setShowModal(false)} className="text-on-surface-variant hover:text-on-surface p-1">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <p className="text-on-surface/80 text-sm mb-4 leading-relaxed">
-              Paste this line into the <code className="bg-background px-1 rounded">{'<head>'}</code> or just before the closing <code className="bg-background px-1 rounded">{'</body>'}</code> tag of your website's index.html.
-            </p>
+    <div className="min-h-screen flex flex-col relative animated-bg">
+      {/* Background Decoration Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="particle w-64 h-64 blur-3xl -top-20 -left-20 opacity-30" />
+        <div className="particle w-96 h-96 blur-3xl -bottom-32 -right-32 opacity-20 bg-tertiary-container" />
+        <div className="absolute top-1/4 left-1/3 w-1 h-1 bg-primary rounded-full animate-pulse" />
+        <div className="absolute top-1/2 right-1/4 w-1 h-1 bg-secondary rounded-full animate-pulse delay-700" />
+      </div>
 
-            <div className="relative group">
-              <pre className="p-4 bg-background border border-outline-variant/30 rounded-xl overflow-x-auto text-sm text-primary-container font-mono shadow-inner">
-                {`<script src="https://customer-support-agent-embed-system.vercel.app/embed.js"></script>`}
-              </pre>
-              <button 
-                onClick={handleCopy}
-                className="absolute top-1/2 -translate-y-1/2 right-3 p-2 bg-surface-container hover:bg-surface-variant text-on-surface-variant rounded-lg transition-colors border border-outline/10 shadow-sm"
-              >
-                {copied ? <CheckCircle className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Main Content Canvas */}
-      <main className="flex-grow flex items-center justify-center pt-32 pb-20 px-6 relative overflow-hidden">
-        {/* Abstract Background Decorative Elements */}
-        <div className="absolute top-[-10%] left-[-5%] w-[40rem] h-[40rem] bg-surface-container rounded-full mix-blend-multiply filter blur-3xl opacity-30" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[35rem] h-[35rem] bg-surface-container-highest rounded-full mix-blend-multiply filter blur-3xl opacity-30" />
-        
-        <div className="max-w-2xl w-full z-10">
-          {/* Header Section */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-primary text-sm font-medium">FluidArch</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-on-surface tracking-tight mb-4 font-headline">
-              Initialize Your Ecosystem
+      {/* Main Content */}
+      <main className="flex-grow flex items-center justify-center px-6 pt-24 pb-12">
+        <div className="w-full max-w-[600px] glass-card rounded-2xl p-8 md:p-10 relative overflow-hidden">
+          {/* Decorative Inner Glow */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
+          
+          <div className="mb-10 text-center">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-3">
+              Initialize Your Support Ecosystem
             </h1>
-            <p className="text-on-surface-variant text-lg max-w-md mx-auto leading-relaxed">
-              Let's weave your custom support layer. Provide context below to begin the fluid integration.
+            <p className="text-zinc-400 leading-relaxed">
+              Define your digital presence and bootstrap your knowledge base in seconds.
             </p>
           </div>
 
-          {/* Focused Form Card */}
-          <div className="bg-surface-container-lowest rounded-xl shadow-[0_12px_40px_rgba(11,28,48,0.06)] p-8 md:p-12 border border-outline-variant/10">
-            <form onSubmit={handleSubmit} className="space-y-8">
-
-              {/* Description Field */}
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-on-surface tracking-wide" htmlFor="description">
-                  General Description / Guidelines
-                </label>
+          <form onSubmit={handleSubmit} className="space-y-6">
+          
+            {/* Description */}
+            <div className="space-y-2 group transition-all duration-300">
+              <label className="block text-xs font-bold tracking-widest text-zinc-400 uppercase ml-1">
+                Description
+              </label>
+              <div className="relative bg-[#1f1f2e] rounded-xl border border-zinc-700/50 focus-within:shadow-[0_0_15px_rgba(129,140,248,0.3)] focus-within:border-indigo-400 transition-all">
+                <MessageSquare className="absolute top-3.5 left-4 text-zinc-500 group-focus-within:text-indigo-400 transition-colors w-5 h-5" />
                 <textarea
-                  id="description"
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Tell the Custom Agent a little about your platform and what rules it should follow..."
+                  onChange={handleDescriptionChange}
+                  placeholder="Briefly describe your support mission..."
                   rows={4}
-                  className="w-full bg-surface-container-high border-none rounded-lg px-4 py-4 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all duration-300 outline-none resize-none"
+                  className="w-full bg-transparent border-none text-white placeholder:text-zinc-600 pl-12 pr-4 py-3.5 focus:outline-none resize-none rounded-xl"
                 />
+                <div className="absolute bottom-3 right-4 text-[10px] font-mono text-zinc-500">
+                  {charCount} / 500
+                </div>
               </div>
+            </div>
 
-              {/* File Upload Field */}
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-on-surface tracking-wide flex justify-between">
-                  <span>Upload Knowledge Base (PDF)</span>
-                  <span className="text-outline-variant font-normal">Optional</span>
-                </label>
+            {/* OR Divider */}
+            <div className="relative py-4 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+              </div>
+              <span className="relative px-4 bg-[#1a1a24] text-[10px] font-bold tracking-[0.2em] text-indigo-400">
+                OR
+              </span>
+            </div>
+
+            {/* PDF Upload Zone */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold tracking-widest text-zinc-400 uppercase ml-1">
+                Knowledge Source
+              </label>
+              
+              {uploadStatus !== 'success' ? (
                 <div
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
-                  onClick={() => !file && uploadStatus !== 'uploading' && fileInputRef.current?.click()}
+                  onClick={() => fileInputRef.current?.click()}
                   className={`
-                    group relative flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl transition-all duration-300 overflow-hidden cursor-pointer
-                    ${isDragging ? 'border-primary bg-primary/5 scale-[1.02]' : 'border-outline-variant bg-surface-container-low hover:bg-surface-container-high'}
-                    ${uploadStatus === 'success' ? 'border-emerald-500/50 bg-emerald-500/5' : ''}
-                    ${uploadStatus === 'error' ? 'border-red-500/50 bg-red-500/5' : ''}
+                    group relative border-2 border-dashed rounded-2xl p-8 transition-all 
+                    flex flex-col items-center justify-center cursor-pointer overflow-hidden
+                    ${isDragging ? 'border-indigo-400 bg-indigo-500/10' : 'border-indigo-400/20 hover:border-indigo-400/50 hover:bg-indigo-500/5'}
+                    ${uploadStatus === 'error' ? 'border-red-400/50 bg-red-500/5' : ''}
                   `}
                 >
                   <input
@@ -278,35 +184,154 @@ export default function GetStartedPage() {
                     onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
                     className="hidden"
                   />
-                  {getUploadZoneContent()}
+                  <div className="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative z-10 flex flex-col items-center text-center">
+                    {isUploading ? (
+                      <>
+                        <div className="w-10 h-10 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin mb-2" />
+                        <p className="text-sm font-medium text-white">Uploading...</p>
+                      </>
+                    ) : (
+                      <>
+                        <CloudUpload className="w-10 h-10 text-indigo-400 mb-2" />
+                        <p className="text-sm font-medium text-white">Drag & drop technical PDF</p>
+                        <p className="text-xs text-zinc-500 mt-1">Maximum file size 25MB</p>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="bg-[#1f1f2e] rounded-xl p-4 border border-indigo-400/30">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <FileText className="w-8 h-8 text-indigo-400" />
+                      <div>
+                        <p className="text-white text-sm font-medium">{file?.name}</p>
+                        <p className="text-xs text-zinc-500">
+                          {(file?.size && (file.size / 1024 / 1024).toFixed(2)) || '0'} MB
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={removeFile}
+                      className="p-1 rounded-lg hover:bg-red-500/20 transition-colors"
+                    >
+                      <X className="w-5 h-5 text-red-400" />
+                    </button>
+                  </div>
+                </div>
+              )}
 
-              {/* Submit Button */}
-              <div className="pt-4">
-                <button
-                  type="submit"
-                  disabled={!description.trim() || isSubmitting}
-                  className="relative overflow-hidden w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-5 rounded-xl font-bold text-lg shadow-xl shadow-primary/20 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
-                >
-                  {isSubmitting ? 'Weaving Matrix...' : 'Create Support System'}
-                </button>
-                <p className="text-center text-xs text-on-surface-variant mt-6">
-                  By creating a system, you agree to our{' '}
-                  <Link href="/terms" className="text-primary hover:underline">
-                    Terms of Service
-                  </Link>{' '}
-                  and{' '}
-                  <Link href="/privacy" className="text-primary hover:underline">
-                    Privacy Policy
-                  </Link>
-                  .
-                </p>
+              {/* File status indicators */}
+              <div className="flex gap-2 mt-2">
+                {file && uploadStatus === 'success' && (
+                  <div className="flex items-center gap-1 text-[10px] text-green-400 border border-green-400/20 rounded-full px-2 py-0.5 bg-green-400/5">
+                    <CheckCircle className="w-3 h-3" />
+                    <span className="max-w-[150px] truncate">{file.name}</span>
+                  </div>
+                )}
+                {uploadStatus === 'error' && (
+                  <div className="flex items-center gap-1 text-[10px] text-red-400 border border-red-400/20 rounded-full px-2 py-0.5 bg-red-400/5">
+                    <ErrorIcon className="w-3 h-3" />
+                    Invalid file format or size (max 25MB, PDF only)
+                  </div>
+                )}
               </div>
-            </form>
+            </div>
+
+            {/* Customization Options */}
+            <div className="border-t border-white/5 pt-6 space-y-4">
+              <button
+                type="button"
+                onClick={() => setIsCustomizationOpen(!isCustomizationOpen)}
+                className="flex items-center justify-between w-full group"
+              >
+                <div className="flex items-center gap-3">
+                  <Palette className="w-5 h-5 text-indigo-400" />
+                  <span className="text-sm font-semibold text-white">Advanced Customization</span>
+                </div>
+                {isCustomizationOpen ? (
+                  <ChevronUp className="w-5 h-5 text-zinc-500 group-hover:text-white transition-all" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-zinc-500 group-hover:text-white transition-all" />
+                )}
+              </button>
+              
+              {isCustomizationOpen && (
+                <div className="grid grid-cols-2 gap-4 animate-in slide-in-from-top-2 duration-200">
+                  <div className="p-4 bg-white/5 rounded-xl flex items-center justify-between">
+                    <span className="text-xs font-medium text-zinc-400">Live Ecosystem</span>
+                    <button
+                      type="button"
+                      onClick={() => setIsLiveEcosystem(!isLiveEcosystem)}
+                      className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors ${
+                        isLiveEcosystem ? 'bg-indigo-500' : 'bg-zinc-700'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          isLiveEcosystem ? 'translate-x-5' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                  <div className="p-4 bg-white/5 rounded-xl flex items-center justify-between">
+                    <span className="text-xs font-medium text-zinc-400">Brand Accent</span>
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-6 h-6 rounded-md border border-white/20 shadow-[0_0_8px_rgba(129,140,248,0.5)]"
+                        style={{ backgroundColor: brandAccent }}
+                      />
+                      <input
+                        type="color"
+                        value={brandAccent}
+                        onChange={(e) => setBrandAccent(e.target.value)}
+                        className="w-0 h-0 opacity-0 absolute"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const colorInput = document.querySelector('input[type="color"]') as HTMLInputElement;
+                          colorInput?.click();
+                        }}
+                        className="text-xs text-indigo-400 hover:text-indigo-300"
+                      >
+                        Change
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full relative group mt-4 overflow-hidden rounded-xl p-[1px] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 group-hover:scale-105 transition-transform duration-500" />
+              <div className="relative bg-[#1a1a24]/80 group-hover:bg-transparent px-8 py-4 rounded-[11px] transition-all duration-300 flex items-center justify-center gap-2">
+                <span className="text-sm font-bold tracking-widest text-white uppercase">
+                  {isSubmitting ? 'Initializing...' : 'Initialize Core'}
+                </span>
+                <Bolt className="w-4 h-4 text-white transition-transform group-hover:translate-x-1" />
+              </div>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-40 bg-white blur-xl transition-opacity duration-300 pointer-events-none" />
+            </button>
+          </form>
+
+          <div className="mt-8 text-center">
+            <p className="text-[11px] text-zinc-500 uppercase tracking-widest">
+              Powered by <span className="text-indigo-400/80">SupportOS Neural Engine</span>
+            </p>
           </div>
         </div>
       </main>
+
+
+     
     </div>
   );
 }

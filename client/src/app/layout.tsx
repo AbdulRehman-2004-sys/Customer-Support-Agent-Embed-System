@@ -1,20 +1,19 @@
-// app/layout.tsx (updated)
+// app/layout.tsx
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-// import Script from 'next/script';
 
-const inter = Inter({ 
+const plusJakarta = Plus_Jakarta_Sans({ 
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-inter',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-plus-jakarta',
 });
 
 export const metadata: Metadata = {
-  title: 'FluidArch - Embed Smart Customer Support',
-  description: 'AI-powered support system that integrates seamlessly into your product, providing instant answers and maintaining your brand\'s unique identity.',
+  title: 'FluidArch | Embed Smart Customer Support',
+  description: 'Transform your product\'s user experience with FluidArch\'s luminescent support widgets. Intelligent, fast, and beautifully integrated into your tech stack.',
 };
 
 export default function RootLayout({
@@ -23,13 +22,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="light">
-      <body className={`${inter.variable} font-body bg-background text-on-surface antialiased`}>
-        <Navbar />
+    <html lang="en" className="dark">
+      <body className={`${plusJakarta.variable} font-body bg-background text-on-surface antialiased`}>
+        <div className="noise-overlay" />
+        <Navbar/>
         {children}
-        <Footer />
-         <script src="https://customer-support-agent-embed-system.vercel.app/embed.js"></script>
+        <Footer/>
+         {/* <script src="https://customer-support-agent-embed-system.vercel.app/embed.js"></script> */}
       </body>
     </html>
   );
 }
+
+
+

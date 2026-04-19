@@ -1,11 +1,16 @@
-// app/page.tsx (updated - remove Navbar and Footer since they're in layout)
+// app/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Features from '@/components/Features';
-import Insights from '@/components/Insights';
+import Stats from '@/components/Stats';
+import HowItWorks from '@/components/HowItWorks';
+import Testimonials from '@/components/Testimonials';
 import CTA from '@/components/CTA';
+import Footer from '@/components/Footer';
+import FloatingChat from '@/components/FloatingChat';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -19,11 +24,16 @@ export default function Home() {
   }
 
   return (
-    <main className="pt-20 overflow-x-hidden">
+    <main className="relative min-h-screen">
+      <Navbar />
       <Hero />
       <Features />
-      <Insights />
+      <Stats />
+      <HowItWorks />
+      <Testimonials />
       <CTA />
+      <Footer />
+      <FloatingChat />
     </main>
   );
 }
