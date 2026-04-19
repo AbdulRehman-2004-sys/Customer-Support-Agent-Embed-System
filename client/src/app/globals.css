@@ -1,0 +1,57 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-headline: var(--font-inter);
+  --font-body: var(--font-inter);
+
+  --color-background: rgb(var(--background));
+  --color-on-background: rgb(var(--on-background));
+  --color-primary: rgb(var(--primary));
+  --color-primary-container: rgb(var(--primary-container));
+  --color-on-primary: #ffffff;
+  --color-surface: rgb(var(--surface));
+  --color-surface-container-low: rgb(240 244 252);
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container: rgb(225 235 250);
+  --color-surface-container-high: rgb(var(--surface-variant));
+  --color-surface-variant: rgb(var(--surface-variant));
+  --color-on-surface: rgb(var(--on-background));
+  --color-on-surface-variant: rgb(var(--on-surface-variant));
+  --color-outline: rgb(var(--outline));
+  --color-outline-variant: rgb(var(--outline-variant));
+  --color-tertiary: rgb(var(--tertiary));
+  --color-tertiary-container: rgb(var(--tertiary-container));
+}
+
+@layer base {
+  :root {
+    --background: 248 249 255;
+    --on-background: 11 28 48;
+    --primary: 70 72 212;
+    --primary-container: 96 99 238;
+    --surface: 248 249 255;
+    --surface-variant: 211 228 254;
+    --on-surface-variant: 70 69 84;
+    --outline: 118 117 134;
+    --outline-variant: 199 196 215;
+    --tertiary: 144 73 0;
+    --tertiary-container: 181 93 0;
+    --error: 186 26 26;
+    --error-container: 255 218 214;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    background: rgba(248, 249, 255, 0.85);
+    backdrop-filter: blur(20px);
+  }
+  
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+}
