@@ -28,7 +28,7 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer />
-         <script src="http://localhost:3000/embed.js"></script>
+         <script src="https://customer-support-agent-embed-system.vercel.app/embed.js"></script>
       </body>
     </html>
   );

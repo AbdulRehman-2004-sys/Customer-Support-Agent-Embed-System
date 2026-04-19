@@ -77,7 +77,7 @@ export default function GetStartedPage() {
         formData.append('file', file);
       }
       
-      const response = await fetch('http://localhost:5000/api/onboard', {
+      const response = await fetch('https://customer-support-agent-embed-system.onrender.com/api/onboard', {
         method: 'POST',
         body: formData,
       });
@@ -97,7 +97,7 @@ export default function GetStartedPage() {
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`<script src="http://localhost:3000/embed.js"></script>`);
+    navigator.clipboard.writeText(`<script src="https://customer-support-agent-embed-system.vercel.app/embed.js"></script>`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -200,7 +200,7 @@ export default function GetStartedPage() {
 
             <div className="relative group">
               <pre className="p-4 bg-background border border-outline-variant/30 rounded-xl overflow-x-auto text-sm text-primary-container font-mono shadow-inner">
-                {`<script src="http://localhost:3000/embed.js"></script>`}
+                {`<script src="https://customer-support-agent-embed-system.vercel.app/embed.js"></script>`}
               </pre>
               <button 
                 onClick={handleCopy}
